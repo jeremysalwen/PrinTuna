@@ -1,0 +1,9 @@
+{
+    "name": "PrinTuna",
+    "author": "Jeremy Salwen",
+    "version": "1.0",
+    "api": 6,
+    "supported_sdk_versions": ["6.0.0", "7.0.0"],
+    "description": "Plugin for automatically tuning print settings using hyperparameter optimization",
+    "catalog": "uranium"
+}
