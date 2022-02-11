@@ -22,8 +22,6 @@ parent_dir = os.path.abspath(os.path.dirname(__file__))
 vendor_dir = os.path.join(parent_dir, 'vendor')
 import sys
 
-# Cura already includes scipy.
-import scipy
 sys.path.append(vendor_dir)
 import optuna
 
