@@ -10,7 +10,7 @@ Here's how it works:
 
 1. You load your test model into Cura, and tell PrinTuna which parameters you want to tune.
 2. PrunTuna will generate a grid of the test object, each copy with slightly different parameters.
-3. You print out the grid of objects, and tell printuna how each object fared, giving it a rating from 1 to 10.
+3. You print out the grid of objects, and tell PrinTuna how each object fared, giving it a rating from 1 to 10.
 4. Go back to step 2 and repeat!
 
 Printuna is smarter than random search, so if it notices certain settings result in better prints, it will try out those
@@ -78,6 +78,10 @@ should now see your model tiled on the build surface, with each copy having diff
 ### 3. Print your parts
 Now, slice your models, and print them on your 3D printer.  Remember to keep track of exactly the location of each model
 because there will be nothing to distinguish them from each other besides how good they look!
+
+You may want to enable the "One at a Time" setting, so each model will be printed independently.  However, this will
+force you to space your models further apart so the printer nozzle doesn't bump into previously printed models.
+![](doc/one_at_a_time.png)
 
 ### 4. Report the Quality of the Test Prints
 Now, in Cura, select the "Score Prints" menu option.  You will see the following window:

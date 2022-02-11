@@ -22,8 +22,9 @@ parent_dir = os.path.abspath(os.path.dirname(__file__))
 vendor_dir = os.path.join(parent_dir, 'vendor')
 import sys
 
+# Cura already includes scipy.
+import scipy
 sys.path.append(vendor_dir)
-
 import optuna
 
 
@@ -75,8 +76,8 @@ class PrintunaExtension(Extension, QObject):
             value = trial.suggest_float(name, min, max)
             container.setProperty(name, "value", value)
 
-    @pyqtSlot()
-    def generatePrints(self):
+    @pyqtSlot(str)
+    def generatePrints(self, model_spacing):
         global_container_stack = self._application.getGlobalContainerStack()
         if not global_container_stack:
             Logger.log("e", "PrinTuna failed to load global container stack.")
@@ -101,7 +102,7 @@ class PrintunaExtension(Extension, QObject):
         min_x = -plate_width / 2 + disallowed_edge + node_box.width / 2
         min_y = -plate_depth / 2 + disallowed_edge + node_box.depth / 2
 
-        min_spacing = 8
+        min_spacing = float(model_spacing)
 
         max_x = -min_x
         max_y = -min_y
@@ -184,4 +185,7 @@ class PrintunaExtension(Extension, QObject):
 
     @pyqtProperty('QStringList')
     def validKeys(self):
-        return list(self._getAllSelectedNodes()[0].callDecoration('getStack').getContainer(0).getAllKeys())
+        nodes = self._getAllSelectedNodes()
+        if nodes:
+            return list(self._getAllSelectedNodes()[0].callDecoration('getStack').getContainer(0).getAllKeys())
+        return []

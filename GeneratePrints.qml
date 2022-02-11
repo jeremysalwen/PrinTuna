@@ -37,7 +37,7 @@ UM.Dialog
                 TextField {
                     id: min_box
                     text: min
-                    onEditingFinished: min = text
+                    onTextChanged: min = text
                 }
                 Label {
                     text: "max:"
@@ -45,7 +45,7 @@ UM.Dialog
                 TextField {
                     id: max_box
                     text: max
-                    onEditingFinished: max = text
+                    onTextChanged: max = text
                 }
                 Button {
                     id: remove_button
@@ -74,11 +74,24 @@ UM.Dialog
                 text: "Add to Tuned Settings"
                 onClicked: {
                     if (manager.validKeys.includes(setting_name.text)) {
-                        if(!listview.model.contains("name", settings_name.text)) {
+                        if(!listview.model.contains("name", setting_name.text)) {
                             listview.model.append({ "name": setting_name.text, "min": "", "max":""})
                         }
                     }
                  }
+            }
+        }
+        Row {
+            spacing: 5
+            Label {
+                text: "Model Spacing: "
+            }
+            TextField {
+                id: model_spacing
+                text: "8"
+            }
+            Label {
+                text: "mm"
             }
         }
         Label {
@@ -87,7 +100,7 @@ UM.Dialog
         Button {
             text: "Generate new set of Test Prints"
             onClicked: {
-                manager.generatePrints()
+                manager.generatePrints(model_spacing.text)
                 base.close()
             }
         }
