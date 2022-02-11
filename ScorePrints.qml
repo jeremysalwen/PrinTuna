@@ -12,6 +12,9 @@ UM.Dialog
     minimumWidth: 200
     minimumHeight: 200
 
+    // Prevent ENTER from closing the dialog
+    function accept() {
+    }
     Column {
         spacing: 5
         Label {
@@ -33,19 +36,21 @@ UM.Dialog
                 TextField {
                     id: score_box
                     text: score
-                    onEditingFinished: score = text
+                    onTextChanged: score = text
                 }
 
             }
         }
         Label {
-            text: "WARNING: All scores must be entered."
+            text: "Submit button will not work until all prints have been scored."
         }
         Button {
             text: "Submit Scores"
             onClicked: {
-                manager.scorePrints()
-                base.close()
+                if (manager.validScoredPrints()) {
+                    manager.scorePrints()
+                    base.close()
+                }
             }
         }
     }

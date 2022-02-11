@@ -235,3 +235,12 @@ class PrintunaExtension(Extension, QObject):
         except ValueError:
             return False
         return True
+
+    @pyqtSlot(result='bool')
+    def validScoredPrints(self):
+        try:
+            for item in self._active_trials_model.items:
+                float(item["score"])
+        except ValueError:
+            return False
+        return True

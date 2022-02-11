@@ -76,7 +76,7 @@ should now see your model tiled on the build surface, with each copy having diff
 ![](doc/benchy_grid.png)
 
 If the "Generate new st of Test Prints" button is not working for you, that means that you have entered invalid options
-above.
+above, or you don't have the model selected.
 
 ### 3. Print your parts
 Now, slice your models, and print them on your 3D printer.  Remember to keep track of exactly the location of each model
