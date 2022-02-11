@@ -46,6 +46,7 @@ class GenericListModel(QtCore.QAbstractListModel):
     def roleNames(self):
         return {key: value.encode('utf-8') for key, value in enumerate(self.schema)}
 
+    @pyqtSlot(str, str, result="bool")
     def contains(self, key, value):
         for item in self.items:
             if item[key] == value:

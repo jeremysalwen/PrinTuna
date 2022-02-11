@@ -33,7 +33,7 @@ class PrintunaExtension(Extension, QObject):
 
         self._application = Application.getInstance()
 
-        self._parameters_list_model = GenericListModel(["name", "min", "max"])
+        self._parameters_list_model = GenericListModel(["name", "type", "min", "max", "choices"])
         self._active_trials_model = GenericListModel(["id", "score"])
         self.optuna_study = None
         self.resetStudy()
@@ -60,7 +60,12 @@ class PrintunaExtension(Extension, QObject):
         # If none are selected, prefill with all valid settings
         if len(self._parameters_list_model.items) == 0:
             for key in self.validKeys:
-                self._parameters_list_model.append({"name": key, "min": "", "max": ""})
+                self._parameters_list_model.append(
+                    {"name": key,
+                     "type": self.getSettingsType(key),
+                     "min": "",
+                     "max": "",
+                     "choices": ','.join(self.getEnumSettingsOptions(key))})
         self.generate_prints_window.show()
 
     def configureSingleObject(self, node):
@@ -69,9 +74,17 @@ class PrintunaExtension(Extension, QObject):
         self._active_trials_model.append({"id": trial.number, "score": ""})
         for setting in self._parameters_list_model.items:
             name = setting["name"]
-            min = float(setting["min"])
-            max = float(setting["max"])
-            value = trial.suggest_float(name, min, max)
+            type = setting["type"]
+
+            if type == "float":
+                value = trial.suggest_float(name, float(setting["min"]), float(setting["max"]))
+            elif type == "int":
+                value = trial.suggest_int(name, int(setting["min"]), int(setting["max"]))
+            elif type == "enum":
+                choices = [s.strip() for s in setting["choices"].split(',')]
+                value = trial.suggest_categorical(name, choices)
+            elif type == "bool":
+                value = trial.suggest_categorical(name, [False, True])
             container.setProperty(name, "value", value)
 
     @pyqtSlot(str)
@@ -185,5 +198,40 @@ class PrintunaExtension(Extension, QObject):
     def validKeys(self):
         nodes = self._getAllSelectedNodes()
         if nodes:
-            return list(self._getAllSelectedNodes()[0].callDecoration('getStack').getContainer(0).getAllKeys())
+            return list(nodes[0].callDecoration('getStack').getContainer(0).getAllKeys())
         return []
+
+    @pyqtSlot(str, result="QString")
+    def getSettingsType(self, key):
+        nodes = self._getAllSelectedNodes()
+        if nodes:
+            return nodes[0].callDecoration('getStack').getSettingDefinition(key).type
+        return ""
+
+    @pyqtSlot(str, result='QStringList')
+    def getEnumSettingsOptions(self, key):
+        nodes = self._getAllSelectedNodes()
+        if nodes:
+            return list(nodes[0].callDecoration('getStack').getSettingDefinition(key).options.keys())
+        return []
+
+    @pyqtSlot(result='bool')
+    def validGeneratePrintOptions(self):
+        try:
+            for setting in self._parameters_list_model.items:
+                name = setting["name"]
+                type = setting["type"]
+                if type == "float":
+                    float(setting["min"])
+                    float(setting["max"])
+                elif type == "int":
+                    int(setting["min"])
+                    int(setting["max"])
+                elif type == "enum":
+                    choices = [s.strip() for s in setting["choices"].split(',')]
+                    for choice in choices:
+                        if choice not in self.getEnumSettingsOptions(name):
+                            return False
+        except ValueError:
+            return False
+        return True

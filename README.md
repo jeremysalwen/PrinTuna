@@ -46,7 +46,8 @@ To do so, select the test object, click the Per Model Settings tool on the lefth
 
 ![](doc/perobject_settings.png)
 
-In the window that opens, check all of the settings you wish to tune.  
+In the window that opens, check all of the settings you wish to tune.  Be careful not to try tuning multiple settings
+at the same time where one is computed based on the other, e.g. "Wall Line Count" and "Wall Thickness".
 
 Note that this means that any setting which cannot be controlled per-model (such as temperature and retraction) 
 **cannot be tuned by PrinTuna**.  If this makes you sad, complain on [this Cura issue](https://github.com/Ultimaker/Cura/issues/3193).
@@ -62,18 +63,20 @@ Select the "Generate Prints" menu.  This will pop open the following dialog box:
 
 ![](doc/generate_prints.png)
 
-Now, we need to configure which settings we want printuna to tune. By default printuna will tune *all* visible
-per-object settings (in the screenshot above, this is "wall_thickness" and "line_width").
+Now, we need to configure which settings we want PrinTuna to tune. By default printuna will tune *all* visible
+per-object settings (in the screenshot above, this is "optimize_wall_printing_order", "xy_offset", 
+"fill_perimeter_gaps", and "wall_line_count").
 
-We need to make sure to enter valid min/max values for each setting we want to tune or it will crash 
-(don't leave those boxes empty!).
-
-PrinTuna only supports tuning floating point settings currently. Please complain in a bug report if this upsets you.
+We need to make sure to enter valid min/max values (for integer and float settings), and valid comma separated lists of
+enum options (for enum settings).
 
 Once you have chosen the settings/ranges you want to tune, click the "Generate new set of Test Prints" button. You
 should now see your model tiled on the build surface, with each copy having different settings:
 
 ![](doc/benchy_grid.png)
+
+If the "Generate new st of Test Prints" button is not working for you, that means that you have entered invalid options
+above.
 
 ### 3. Print your parts
 Now, slice your models, and print them on your 3D printer.  Remember to keep track of exactly the location of each model

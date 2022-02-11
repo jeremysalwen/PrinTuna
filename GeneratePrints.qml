@@ -12,6 +12,9 @@ UM.Dialog
     minimumWidth: 200
     minimumHeight: 200
 
+    // Prevent ENTER from closing the dialog
+    function accept() {
+    }
     Column {
         spacing: 5
 
@@ -29,23 +32,37 @@ UM.Dialog
                 spacing: 5
                 height: 40
                 Label {
-                    text: name
+                    text: name + " [" + type + "]"
                 }
                 Label {
                     text: "min:"
+                    visible: type == "int" || type == "float"
                 }
                 TextField {
                     id: min_box
                     text: min
                     onTextChanged: min = text
+                    visible: type == "int" || type == "float"
                 }
                 Label {
                     text: "max:"
+                    visible: type == "int" || type == "float"
                 }
                 TextField {
                     id: max_box
                     text: max
                     onTextChanged: max = text
+                    visible: type == "int" || type == "float"
+                }
+                Label {
+                    text: "Enum Options (comma separated): "
+                    visible: type == "enum"
+                }
+                TextField {
+                    id: choices_box
+                    text: choices
+                    onTextChanged: choices = text
+                    visible: type == "enum"
                 }
                 Button {
                     id: remove_button
@@ -75,7 +92,12 @@ UM.Dialog
                 onClicked: {
                     if (manager.validKeys.includes(setting_name.text)) {
                         if(!listview.model.contains("name", setting_name.text)) {
-                            listview.model.append({ "name": setting_name.text, "min": "", "max":""})
+                            listview.model.append({
+                                "name": setting_name.text,
+                                "type": manager.getSettingsType(setting_name.text),
+                                "min": "",
+                                "max":"",
+                                "choices": manager.getEnumSettingsOptions(setting_name.text).join()})
                         }
                     }
                  }
@@ -100,8 +122,10 @@ UM.Dialog
         Button {
             text: "Generate new set of Test Prints"
             onClicked: {
-                manager.generatePrints(model_spacing.text)
-                base.close()
+                if(manager.validGeneratePrintOptions()) {
+                    manager.generatePrints(model_spacing.text)
+                    base.close()
+                }
             }
         }
     }
