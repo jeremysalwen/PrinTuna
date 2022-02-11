@@ -35,7 +35,6 @@ class PrintunaExtension(Extension, QObject):
         self._application = Application.getInstance()
 
         self._parameters_list_model = GenericListModel(["name", "min", "max"])
-        self._parameters_list_model.append({"name": "line_width", "min": "0.1", "max": "0.4"})
         self._active_trials_model = GenericListModel(["id", "score"])
         self.optuna_study = None
         self.resetStudy()
@@ -58,6 +57,11 @@ class PrintunaExtension(Extension, QObject):
     def showGeneratePrints(self):
         if not self.generate_prints_window:  # Don't create more than one.
             self.generate_prints_window = self._createDialog("GeneratePrints.qml")
+
+        # If none are selected, prefill with all valid settings
+        if len(self._parameters_list_model.items) == 0:
+            for key in self.validKeys:
+                self._parameters_list_model.append({"name": key, "min": "", "max": ""})
         self.generate_prints_window.show()
 
     def configureSingleObject(self, node):
@@ -70,7 +74,6 @@ class PrintunaExtension(Extension, QObject):
             max = float(setting["max"])
             value = trial.suggest_float(name, min, max)
             container.setProperty(name, "value", value)
-
 
     @pyqtSlot()
     def generatePrints(self):
@@ -178,3 +181,7 @@ class PrintunaExtension(Extension, QObject):
     @pyqtProperty(QObject, constant=True)
     def ActiveTrialsModel(self):
         return self._active_trials_model
+
+    @pyqtProperty('QStringList')
+    def validKeys(self):
+        return list(self._getAllSelectedNodes()[0].callDecoration('getStack').getContainer(0).getAllKeys())

@@ -52,7 +52,7 @@ Note that this means that any setting which cannot be controlled per-model (such
 **cannot be tuned by PrinTuna**.  If this makes you sad, complain on [this Cura issue](https://github.com/Ultimaker/Cura/issues/3193).
 
 ### 2. Generate Prints
-Before we continue, it is important to make sure that the test object is selected **selected**.
+Before we continue, it is important to make sure that the test object is **selected**.
 
 In the Extensions menu, you will see three options under PrinTuna (if not, this means you haven't properly installed the plugin)
 
@@ -62,17 +62,13 @@ Select the "Generate Prints" menu.  This will pop open the following dialog box:
 
 ![](doc/generate_prints.png)
 
-Now, we need to configure which settings we want printuna to tune.  We can see in the above screenshot that currently
-we have configured to tune just the **line_width** setting, between the bounds of 0.1 and 0.4.
+Now, we need to configure which settings we want printuna to tune. By default printuna will tune *all* visible
+per-object settings (in the screenshot above, this is "wall_thickness" and "line_width").
 
-Note that the name "line_width" is **not** the same as the name of the setting as it shows up in the Cura UI. It is important that you
-put in "line_width" here and NOT "Line Width", or you will get a crash.  The situation is the same for all other settings as well.
+We need to make sure to enter valid min/max values for each setting we want to tune or it will crash 
+(don't leave those boxes empty!).
 
-Unfortunately, I don't know an easy way to figure out the correspondence between these two forms of the name.  
-https://github.com/Ultimaker/Cura/blob/78ecb7ec9a0c1deae6c322a286a13ee70a07e379/plugins/LegacyProfileReader/DictionaryOfDoom.json
-may help you to find the name of a setting you are looking for.
-
-PrinTuna only supports tuning floating point settings yet. Please complain in a bug report if this upsets you.
+PrinTuna only supports tuning floating point settings currently. Please complain in a bug report if this upsets you.
 
 Once you have chosen the settings/ranges you want to tune, click the "Generate new set of Test Prints" button. You
 should now see your model tiled on the build surface, with each copy having different settings:

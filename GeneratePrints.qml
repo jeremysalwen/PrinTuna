@@ -16,7 +16,10 @@ UM.Dialog
         spacing: 5
 
         Label {
-            text: "POTENTIAL CRASH: setting names must be exactly right and min/max must be filled with valid numbers."
+            text: "WARNING: Make sure there is only a single selected object on your build plate"
+        }
+        Label {
+            text: "WARNING: Make sure you have valid min/max entered for all settings below."
         }
         ListView {
             id: listview
@@ -54,6 +57,10 @@ UM.Dialog
                 }
             }
         }
+        Label {
+            id: "valid_settings_names"
+            text: ""
+        }
         Row {
             spacing: 5
             Label {
@@ -66,12 +73,13 @@ UM.Dialog
                 id: setting_add_button
                 text: "Add to Tuned Settings"
                 onClicked: {
-                     listview.model.append({ "name": setting_name.text, "min": "", "max":""})
+                    if (manager.validKeys.includes(setting_name.text)) {
+                        if(!listview.model.contains("name", settings_name.text)) {
+                            listview.model.append({ "name": setting_name.text, "min": "", "max":""})
+                        }
+                    }
                  }
             }
-        }
-        Label {
-            text: "WARNING: Generating test prints requires exactly one object to be selected or it will do nothing."
         }
         Label {
             text: "WARNING: Generating test prints will forget any previous unscored print."
@@ -83,5 +91,8 @@ UM.Dialog
                 base.close()
             }
         }
+    }
+    onVisibleChanged: {
+        valid_settings_names.text = "Valid (visible) settings names: " + manager.validKeys
     }
 }
